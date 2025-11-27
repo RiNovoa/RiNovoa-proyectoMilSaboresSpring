@@ -24,7 +24,7 @@ public class ProductoController {
     // Crear un producto
     @PostMapping
     public ResponseEntity<Producto> addProducto(@RequestBody Producto p) {
-        // Nos aseguramos de que se cree uno nuevo (INSERT)
+        // nos aseguramos que se cree uno nuevo
         p.setId(null);
         Producto creado = service.saveProducto(p);
         return ResponseEntity.ok(creado);
@@ -33,7 +33,6 @@ public class ProductoController {
     // Crear varios productos (ej: carga inicial)
     @PostMapping("/lote")
     public ResponseEntity<List<Producto>> addProductos(@RequestBody List<Producto> productos) {
-        // Forzamos a que todos sean nuevos
         productos.forEach(prod -> prod.setId(null));
         List<Producto> creados = service.saveProductos(productos);
         return ResponseEntity.ok(creados);
@@ -79,7 +78,6 @@ public class ProductoController {
             @PathVariable Integer id,
             @RequestBody Producto p
     ) {
-        // nos aseguramos que use el id de la ruta
         p.setId(id);
         Producto actualizado = service.updateProducto(id, p);
 

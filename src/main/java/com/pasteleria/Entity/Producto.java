@@ -1,5 +1,6 @@
 package com.pasteleria.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 /**
@@ -15,26 +16,31 @@ public class Producto {
     @Column(name = "id")
     private Integer id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "codigo", nullable = false, unique = true, length = 50)
     private String codigo;
 
-    @Column(nullable = false, length = 200)
+    @Column(name = "nombre", nullable = false, length = 200)
     private String nombre;
 
-    @Column(length = 200)
-    private String categoria;
+    // 🔗 Relación MANY-TO-ONE con Categoria
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id", nullable = false) // FK en PRODUCTO
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Categoria categoria;
 
-    // El atributo se llama precioClp (camelCase), pero la columna sigue siendo precio_clp
     @Column(name = "precio_clp")
-    private Integer precioClp;
+    private Integer precio_clp;
 
-    @Column(length = 1000)
+    @Column(name = "descripcion", length = 1000)
     private String descripcion;
 
+    @Column(name = "imagen")
     private String imagen;
 
+    @Column(name = "stock")
     private Integer stock;
 
+    @Column(name = "activo")
     private Boolean activo = true;
 
     // ===== Constructor vacío requerido por JPA =====
@@ -66,20 +72,20 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public String getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 
-    public Integer getPrecioClp() {
-        return precioClp;
+    public Integer getPrecio_clp() {
+        return precio_clp;
     }
 
-    public void setPrecioClp(Integer precioClp) {
-        this.precioClp = precioClp;
+    public void setPrecio_clp(Integer precio_clp) {
+        this.precio_clp = precio_clp;
     }
 
     public String getDescripcion() {
@@ -120,8 +126,8 @@ public class Producto {
                 "id=" + id +
                 ", codigo='" + codigo + '\'' +
                 ", nombre='" + nombre + '\'' +
-                ", categoria='" + categoria + '\'' +
-                ", precioClp=" + precioClp +
+                ", categoria=" + (categoria != null ? categoria.getNombre() : "null") +
+                ", precio_clp=" + precio_clp +
                 ", descripcion='" + descripcion + '\'' +
                 ", imagen='" + imagen + '\'' +
                 ", stock=" + stock +

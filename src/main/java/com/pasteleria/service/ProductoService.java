@@ -58,8 +58,8 @@ public class ProductoService {
         Producto existing = opt.get();
         existing.setCodigo(p.getCodigo());
         existing.setNombre(p.getNombre());
-        existing.setCategoria(p.getCategoria());
-        existing.setPrecioClp(p.getPrecioClp());   // <-- corregido
+        existing.setCategoria(p.getCategoria());   
+        existing.setPrecio_clp(p.getPrecio_clp());
         existing.setDescripcion(p.getDescripcion());
         existing.setImagen(p.getImagen());
         existing.setStock(p.getStock());

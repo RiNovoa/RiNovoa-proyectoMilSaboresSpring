@@ -1,6 +1,9 @@
 package com.pasteleria.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import java.util.List;
 
 /**
  *
@@ -27,8 +30,21 @@ public class Boleta {
     @Column(name = "medio_pago", length = 50)
     private String medio_pago;
 
-    @Column(name = "id_usuario")
+    @Column(name = "id_usuario", nullable = false)
     private Integer idUsuario;
+
+    // 🔗 Relación MANY-TO-ONE con Usuario
+    // Usa la misma columna id_usuario. Como ya tenemos idUsuario,
+    // marcamos insertable/updatable en false para no duplicar.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Usuario usuario;
+
+    // 🔗 Relación ONE-TO-MANY con DetalleBoleta
+    @OneToMany(mappedBy = "boleta", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<DetalleBoleta> detalles;
 
     // ===== Constructor vacío requerido por JPA =====
     public Boleta() {
@@ -82,6 +98,24 @@ public class Boleta {
 
     public void setIdUsuario(Integer idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        // opcionalmente podrías sincronizar idUsuario:
+        // this.idUsuario = (usuario != null ? usuario.getId() : null);
+    }
+
+    public List<DetalleBoleta> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleBoleta> detalles) {
+        this.detalles = detalles;
     }
 
     @Override

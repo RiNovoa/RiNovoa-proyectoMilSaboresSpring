@@ -16,13 +16,13 @@ public class Usuario implements Serializable {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "run", nullable = false, unique = true, length = 12)
-    private String run;  // Ej: "20929392-1"
+    @Column(name = "run", unique = true, length = 12)
+    private String run;  // Ej: "20929392-1" (para CLIENTE; puede ser null en ADMIN/VENDEDOR)
 
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "apellido", nullable = false, length = 100)
+    @Column(name = "apellido", length = 100)
     private String apellido;
 
     @Column(name = "email", nullable = false, length = 200, unique = true)
@@ -37,13 +37,17 @@ public class Usuario implements Serializable {
     @Column(name = "direccion", length = 255)
     private String direccion;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "rol", nullable = false, length = 20)
+    private RolUsuario rol;   // ADMIN, VENDEDOR, CLIENTE
+
     // Constructor vacío requerido por JPA
     public Usuario() {
     }
 
     // Constructor opcional
     public Usuario(String run, String nombre, String apellido, String email,
-                   String password, String telefono, String direccion) {
+                   String password, String telefono, String direccion, RolUsuario rol) {
         this.run = run;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -51,6 +55,7 @@ public class Usuario implements Serializable {
         this.password = password;
         this.telefono = telefono;
         this.direccion = direccion;
+        this.rol = rol;
     }
 
     // Getters y Setters:
@@ -119,6 +124,14 @@ public class Usuario implements Serializable {
         this.direccion = direccion;
     }
 
+    public RolUsuario getRol() {
+        return rol;
+    }
+
+    public void setRol(RolUsuario rol) {
+        this.rol = rol;
+    }
+
     @Override
     public String toString() {
         return "Usuario{" +
@@ -129,6 +142,7 @@ public class Usuario implements Serializable {
                 ", email='" + email + '\'' +
                 ", telefono='" + telefono + '\'' +
                 ", direccion='" + direccion + '\'' +
+                ", rol=" + rol +
                 '}';
     }
 }

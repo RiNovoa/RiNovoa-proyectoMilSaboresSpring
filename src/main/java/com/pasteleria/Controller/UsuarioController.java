@@ -30,7 +30,7 @@ public class UsuarioController {
     }
     
     // Crear varios usuarios
-    @PostMapping("/batch")
+    @PostMapping("/lote")
     public List<Usuario> addUsuarios(@RequestBody List<Usuario> usuarios) {
         return service.saveUsuarios(usuarios);
     }

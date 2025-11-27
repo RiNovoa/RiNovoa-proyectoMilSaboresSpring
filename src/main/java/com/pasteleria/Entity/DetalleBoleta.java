@@ -1,5 +1,6 @@
 package com.pasteleria.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 /**
@@ -29,6 +30,18 @@ public class DetalleBoleta {
 
     @Column(name = "subtotal", nullable = false)
     private Integer subtotal;
+
+    // 🔗 MANY-TO-ONE con Boleta
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_boleta", insertable = false, updatable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Boleta boleta;
+
+    // 🔗 MANY-TO-ONE con Producto
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_producto", insertable = false, updatable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Producto producto;
 
     // ===== Constructor vacío =====
     public DetalleBoleta() {
@@ -82,6 +95,26 @@ public class DetalleBoleta {
 
     public void setSubtotal(Integer subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public Boleta getBoleta() {
+        return boleta;
+    }
+
+    public void setBoleta(Boleta boleta) {
+        this.boleta = boleta;
+        // opcionalmente:
+        // this.idBoleta = (boleta != null ? boleta.getId() : null);
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+        // opcionalmente:
+        // this.idProducto = (producto != null ? producto.getId() : null);
     }
 
     @Override

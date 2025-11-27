@@ -17,9 +17,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
     
-    // Crear un usuario
+    // Crear un usuario (ADMIN, VENDEDOR o CLIENTE)
     public Usuario saveUsuario(Usuario u) {
-        // id null => INSERT; run viene desde el frontend
+        // Forzamos que sea un INSERT
         u.setId(null);
         return repository.save(u);
     }
@@ -50,13 +50,13 @@ public class UsuarioService {
         return repository.findByEmail(email);
     }
     
-    // Eliminar
+    // Eliminar usuario
     public String deleteUsuario(Integer id) {
         repository.deleteById(id);
-        return "Usuario eliminado!! " + id;
+        return "Usuario eliminado: " + id;
     }
     
-    // Actualizar
+    // Actualizar usuario
     public Usuario updateUsuario(Integer id, Usuario u) {
         Optional<Usuario> opt = repository.findById(id);
         if (opt.isEmpty()) {
@@ -64,6 +64,7 @@ public class UsuarioService {
         }
 
         Usuario existingUsuario = opt.get();
+        
         existingUsuario.setRun(u.getRun());
         existingUsuario.setNombre(u.getNombre());
         existingUsuario.setApellido(u.getApellido());
@@ -71,7 +72,8 @@ public class UsuarioService {
         existingUsuario.setPassword(u.getPassword());
         existingUsuario.setTelefono(u.getTelefono());
         existingUsuario.setDireccion(u.getDireccion());
-        
+        existingUsuario.setRol(u.getRol());  
+
         return repository.save(existingUsuario);
     }
 }
