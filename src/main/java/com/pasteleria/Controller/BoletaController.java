@@ -1,6 +1,7 @@
 package com.pasteleria.Controller;
 
 import com.pasteleria.Entity.Boleta;
+import com.pasteleria.dto.CheckoutRequest;
 import com.pasteleria.service.BoletaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -21,10 +22,9 @@ public class BoletaController {
     @Autowired
     private BoletaService service;
 
-    // Crear una boleta
+    // Crear una boleta (uso general)
     @PostMapping
     public ResponseEntity<Boleta> addBoleta(@RequestBody Boleta b) {
-        // Aseguramos INSERT (ignoramos cualquier id que venga en el JSON)
         b.setId(null);
         Boleta creada = service.saveBoleta(b);
         return ResponseEntity.ok(creada);
@@ -75,5 +75,13 @@ public class BoletaController {
         Boleta actualizada = service.updateBoleta(id, b);
         if (actualizada == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(actualizada);
+    }
+
+
+    // Se llama desde el frontend cuando el pago (PayPal) es exitoso.
+    @PostMapping("/checkout")
+    public ResponseEntity<Boleta> checkout(@RequestBody CheckoutRequest req) {
+        Boleta boleta = service.procesarCheckout(req);
+        return ResponseEntity.ok(boleta);
     }
 }
