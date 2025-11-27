@@ -2,59 +2,91 @@ package com.pasteleria.Controller;
 
 import com.pasteleria.Entity.Producto;
 import com.pasteleria.service.ProductoService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
  * @author Cristóbal Pérez
  */
 @RestController
+@RequestMapping("/api/v1/productos")
+@CrossOrigin(origins = "http://localhost:5173") // Front Vite
+@Tag(name = "Productos", description = "Operaciones CRUD de productos")
 public class ProductoController {
 
     @Autowired
     private ProductoService service;
 
-    @PostMapping("/addProducto")
-    public Producto addProducto(@RequestBody Producto p) {
-        return service.saveProducto(p);
+    // Crear un producto
+    @PostMapping
+    public ResponseEntity<Producto> addProducto(@RequestBody Producto p) {
+        // Nos aseguramos de que se cree uno nuevo (INSERT)
+        p.setId(null);
+        Producto creado = service.saveProducto(p);
+        return ResponseEntity.ok(creado);
     }
 
-    @PostMapping("/addProductos")
-    public List<Producto> addProductos(@RequestBody List<Producto> productos) {
-        return service.saveProductos(productos);
+    // Crear varios productos (ej: carga inicial)
+    @PostMapping("/lote")
+    public ResponseEntity<List<Producto>> addProductos(@RequestBody List<Producto> productos) {
+        // Forzamos a que todos sean nuevos
+        productos.forEach(prod -> prod.setId(null));
+        List<Producto> creados = service.saveProductos(productos);
+        return ResponseEntity.ok(creados);
     }
 
-    @GetMapping("/productos")
-    public List<Producto> findAllProductos() {
-        return service.getProductos();
+    // Listar todos
+    @GetMapping
+    public ResponseEntity<List<Producto>> findAllProductos() {
+        List<Producto> lista = service.getProductos();
+        return ResponseEntity.ok(lista);
     }
 
-    @GetMapping("/productoById/{id}")
-    public Producto findProductoById(@PathVariable int id) {
-        return service.getProductoById(id);
+    // Buscar por id
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> findProductoById(@PathVariable Integer id) {
+        Producto p = service.getProductoById(id);
+        if (p == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(p);
     }
 
-    @GetMapping("/productoByCodigo/{codigo}")
-    public Producto findProductoByCodigo(@PathVariable String codigo) {
-        return service.getProductoByCodigo(codigo);
+    // Buscar por código
+    @GetMapping("/codigo/{codigo}")
+    public ResponseEntity<Producto> findProductoByCodigo(@PathVariable String codigo) {
+        Producto p = service.getProductoByCodigo(codigo);
+        if (p == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(p);
     }
 
-    @DeleteMapping("/deleteProducto/{id}")
-    public String deleteProducto(@PathVariable int id) {
-        return service.deleteProducto(id);
+    // Eliminar
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProducto(@PathVariable Integer id) {
+        service.deleteProducto(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/updateProducto")
-    public Producto updateProducto(@RequestBody Producto p) {
-        return service.updateProducto(p);
+    // Actualizar
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(
+            @PathVariable Integer id,
+            @RequestBody Producto p
+    ) {
+        // nos aseguramos que use el id de la ruta
+        p.setId(id);
+        Producto actualizado = service.updateProducto(id, p);
+
+        if (actualizado == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(actualizado);
     }
 
 }

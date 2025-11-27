@@ -11,8 +11,9 @@ import jakarta.persistence.*;
 public class Producto {
 
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
 
     @Column(nullable = false, unique = true, length = 50)
     private String codigo;
@@ -20,11 +21,12 @@ public class Producto {
     @Column(nullable = false, length = 200)
     private String nombre;
 
+    @Column(length = 200)
     private String categoria;
 
-    
+    // El atributo se llama precioClp (camelCase), pero la columna sigue siendo precio_clp
     @Column(name = "precio_clp")
-    private Integer precio_clp;
+    private Integer precioClp;
 
     @Column(length = 1000)
     private String descripcion;
@@ -33,15 +35,18 @@ public class Producto {
 
     private Integer stock;
 
-    private Boolean activo;
+    private Boolean activo = true;
+
+    // ===== Constructor vacío requerido por JPA =====
+    public Producto() {
+    }
 
     // ===== Getters y Setters =====
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -69,12 +74,12 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    public Integer getPrecio_clp() {
-        return precio_clp;
+    public Integer getPrecioClp() {
+        return precioClp;
     }
 
-    public void setPrecio_clp(Integer precio_clp) {
-        this.precio_clp = precio_clp;
+    public void setPrecioClp(Integer precioClp) {
+        this.precioClp = precioClp;
     }
 
     public String getDescripcion() {
@@ -111,17 +116,16 @@ public class Producto {
 
     @Override
     public String toString() {
-        return "Producto{" 
-                + "id=" + id 
-                + ", codigo=" + codigo 
-                + ", nombre=" + nombre 
-                + ", categoria=" + categoria 
-                + ", precio_clp=" + precio_clp 
-                + ", descripcion=" + descripcion 
-                + ", imagen=" + imagen 
-                + ", stock=" + stock 
-                + ", activo=" + activo 
-                + '}';
+        return "Producto{" +
+                "id=" + id +
+                ", codigo='" + codigo + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", categoria='" + categoria + '\'' +
+                ", precioClp=" + precioClp +
+                ", descripcion='" + descripcion + '\'' +
+                ", imagen='" + imagen + '\'' +
+                ", stock=" + stock +
+                ", activo=" + activo +
+                '}';
     }
-
 }

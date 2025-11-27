@@ -3,6 +3,7 @@ package com.pasteleria.service;
 import com.pasteleria.Entity.Producto;
 import com.pasteleria.repository.ProductoRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,44 +18,48 @@ public class ProductoService {
     @Autowired
     private ProductoRepository repository;
 
-    // CRUD:
-
+    // Crear uno
     public Producto saveProducto(Producto p) {
         return repository.save(p);
     }
 
+    // Crear varios
     public List<Producto> saveProductos(List<Producto> productos) {
         return repository.saveAll(productos);
     }
 
+    // Listar todos
     public List<Producto> getProductos() {
         return repository.findAll();
     }
 
-    public Producto getProductoById(int id) {
+    // Buscar por id
+    public Producto getProductoById(Integer id) {
         return repository.findById(id).orElse(null);
     }
 
+    // Buscar por código
     public Producto getProductoByCodigo(String codigo) {
         return repository.findByCodigo(codigo);
     }
 
-    public String deleteProducto(int id) {
+    // Eliminar
+    public void deleteProducto(Integer id) {
         repository.deleteById(id);
-        return "Producto eliminado!! " + id;
     }
 
-    public Producto updateProducto(Producto p) {
-        Producto existing = repository.findById(p.getId()).orElse(null);
-
-        if (existing == null) {
+    // Actualizar
+    public Producto updateProducto(Integer id, Producto p) {
+        Optional<Producto> opt = repository.findById(id);
+        if (opt.isEmpty()) {
             return null;
         }
 
+        Producto existing = opt.get();
         existing.setCodigo(p.getCodigo());
         existing.setNombre(p.getNombre());
         existing.setCategoria(p.getCategoria());
-        existing.setPrecio_clp(p.getPrecio_clp());
+        existing.setPrecioClp(p.getPrecioClp());   // <-- corregido
         existing.setDescripcion(p.getDescripcion());
         existing.setImagen(p.getImagen());
         existing.setStock(p.getStock());
