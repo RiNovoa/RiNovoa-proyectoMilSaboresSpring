@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
-    public Producto findByCodigo(String codigo);
+    Producto findByCodigo(String codigo);
 
 }

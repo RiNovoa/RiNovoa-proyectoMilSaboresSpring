@@ -1,5 +1,6 @@
 package com.pasteleria.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 /**
@@ -11,37 +12,47 @@ import jakarta.persistence.*;
 public class Producto {
 
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "codigo", nullable = false, unique = true, length = 50)
     private String codigo;
 
-    @Column(nullable = false, length = 200)
+    @Column(name = "nombre", nullable = false, length = 200)
     private String nombre;
 
-    private String categoria;
+    // 🔗 Relación MANY-TO-ONE con Categoria
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id", nullable = false) // FK en PRODUCTO
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Categoria categoria;
 
-    
     @Column(name = "precio_clp")
     private Integer precio_clp;
 
-    @Column(length = 1000)
+    @Column(name = "descripcion", length = 1000)
     private String descripcion;
 
+    @Column(name = "imagen")
     private String imagen;
 
+    @Column(name = "stock")
     private Integer stock;
 
-    private Boolean activo;
+    @Column(name = "activo")
+    private Boolean activo = true;
+
+    // ===== Constructor vacío requerido por JPA =====
+    public Producto() {
+    }
 
     // ===== Getters y Setters =====
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -61,11 +72,11 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public String getCategoria() {
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(String categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
 
@@ -111,17 +122,16 @@ public class Producto {
 
     @Override
     public String toString() {
-        return "Producto{" 
-                + "id=" + id 
-                + ", codigo=" + codigo 
-                + ", nombre=" + nombre 
-                + ", categoria=" + categoria 
-                + ", precio_clp=" + precio_clp 
-                + ", descripcion=" + descripcion 
-                + ", imagen=" + imagen 
-                + ", stock=" + stock 
-                + ", activo=" + activo 
-                + '}';
+        return "Producto{" +
+                "id=" + id +
+                ", codigo='" + codigo + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", categoria=" + (categoria != null ? categoria.getNombre() : "null") +
+                ", precio_clp=" + precio_clp +
+                ", descripcion='" + descripcion + '\'' +
+                ", imagen='" + imagen + '\'' +
+                ", stock=" + stock +
+                ", activo=" + activo +
+                '}';
     }
-
 }
