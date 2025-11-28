@@ -1,6 +1,7 @@
 package com.pasteleria.Controller;
 
 import com.pasteleria.Entity.Producto;
+import com.pasteleria.security.ApiKeyService;
 import com.pasteleria.service.ProductoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -21,22 +22,64 @@ public class ProductoController {
     @Autowired
     private ProductoService service;
 
+    @Autowired
+    private ApiKeyService apiKeyService;
+
+    // SOLO ADMIN 
+
     // Crear un producto
     @PostMapping
-    public ResponseEntity<Producto> addProducto(@RequestBody Producto p) {
-        // nos aseguramos que se cree uno nuevo
+    public ResponseEntity<Producto> addProducto(
+            @RequestHeader(value = "X-API-KEY", required = false) String apiKey,
+            @RequestBody Producto p) {
+
+        apiKeyService.validate(apiKey);
         p.setId(null);
         Producto creado = service.saveProducto(p);
         return ResponseEntity.ok(creado);
     }
 
-    // Crear varios productos (ej: carga inicial)
+    
     @PostMapping("/lote")
-    public ResponseEntity<List<Producto>> addProductos(@RequestBody List<Producto> productos) {
+    public ResponseEntity<List<Producto>> addProductos(
+            @RequestHeader(value = "X-API-KEY", required = false) String apiKey,
+            @RequestBody List<Producto> productos) {
+
+        apiKeyService.validate(apiKey);
         productos.forEach(prod -> prod.setId(null));
         List<Producto> creados = service.saveProductos(productos);
         return ResponseEntity.ok(creados);
     }
+
+    // Eliminar
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProducto(
+            @RequestHeader(value = "X-API-KEY", required = false) String apiKey,
+            @PathVariable Integer id) {
+
+        apiKeyService.validate(apiKey);
+        service.deleteProducto(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Actualizar
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(
+            @RequestHeader(value = "X-API-KEY", required = false) String apiKey,
+            @PathVariable Integer id,
+            @RequestBody Producto p) {
+
+        apiKeyService.validate(apiKey);
+        p.setId(id);
+        Producto actualizado = service.updateProducto(id, p);
+
+        if (actualizado == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(actualizado);
+    }
+
+    // ================== RUTAS PÚBLICAS (TIENDA / CLIENTE) ==================
 
     // Listar todos
     @GetMapping
@@ -64,27 +107,4 @@ public class ProductoController {
         }
         return ResponseEntity.ok(p);
     }
-
-    // Eliminar
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProducto(@PathVariable Integer id) {
-        service.deleteProducto(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    // Actualizar
-    @PutMapping("/{id}")
-    public ResponseEntity<Producto> updateProducto(
-            @PathVariable Integer id,
-            @RequestBody Producto p
-    ) {
-        p.setId(id);
-        Producto actualizado = service.updateProducto(id, p);
-
-        if (actualizado == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(actualizado);
-    }
-
 }

@@ -1,6 +1,7 @@
 package com.pasteleria.Controller;
 
 import com.pasteleria.Entity.Usuario;
+import com.pasteleria.security.ApiKeyService;
 import com.pasteleria.service.UsuarioService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,20 +23,32 @@ public class UsuarioController {
     
     @Autowired
     private UsuarioService service;
+
+    @Autowired
+    private ApiKeyService apiKeyService;
     
-    // Crear un usuario (cliente o creado por admin)
+    // ================== RUTAS PÚBLICAS (si quieres que el cliente se registre solo) ==================
+    // Si prefieres que SOLO admin cree usuarios, también puedes proteger esta con API KEY.
+
+    // Crear un usuario (por ahora la dejo pública; si quieres protegerla, le agregamos header)
     @PostMapping
     public Usuario addUsuario(@RequestBody Usuario u) {
         return service.saveUsuario(u);
     }
     
-    // Crear varios usuarios
-    @PostMapping("/lote")
-    public List<Usuario> addUsuarios(@RequestBody List<Usuario> usuarios) {
+    // ================== RUTAS SOLO ADMIN (con API KEY) ==================
+
+    // Crear varios usuarios (solo admin)
+    @PostMapping("/batch")
+    public List<Usuario> addUsuarios(
+            @RequestHeader(value = "X-API-KEY", required = false) String apiKey,
+            @RequestBody List<Usuario> usuarios) {
+
+        apiKeyService.validate(apiKey);
         return service.saveUsuarios(usuarios);
     }
     
-    // Listar todos
+    // Listar todos (puede ser público o solo admin, tú decides; aquí lo dejo público)
     @GetMapping
     public List<Usuario> findAllUsuarios() {
         return service.getUsuarios();
@@ -59,15 +72,24 @@ public class UsuarioController {
         return service.getUsuarioByEmail(email);
     }
     
-    // Eliminar
+    // Eliminar (SOLO ADMIN)
     @DeleteMapping("/{id}")
-    public String deleteUsuario(@PathVariable Integer id) {
+    public String deleteUsuario(
+            @RequestHeader(value = "X-API-KEY", required = false) String apiKey,
+            @PathVariable Integer id) {
+
+        apiKeyService.validate(apiKey);
         return service.deleteUsuario(id);
     }
     
-    // Actualizar
+    // Actualizar (SOLO ADMIN)
     @PutMapping("/{id}")
-    public Usuario updateUsuario(@PathVariable Integer id, @RequestBody Usuario u) {
+    public Usuario updateUsuario(
+            @RequestHeader(value = "X-API-KEY", required = false) String apiKey,
+            @PathVariable Integer id,
+            @RequestBody Usuario u) {
+
+        apiKeyService.validate(apiKey);
         return service.updateUsuario(id, u);
     }
 }
