@@ -27,10 +27,6 @@ public class UsuarioController {
     @Autowired
     private ApiKeyService apiKeyService;
     
-    // ================== RUTAS PÚBLICAS (si quieres que el cliente se registre solo) ==================
-    // Si prefieres que SOLO admin cree usuarios, también puedes proteger esta con API KEY.
-
-    // Crear un usuario (por ahora la dejo pública; si quieres protegerla, le agregamos header)
     @PostMapping
     public Usuario addUsuario(@RequestBody Usuario u) {
         return service.saveUsuario(u);
@@ -48,7 +44,7 @@ public class UsuarioController {
         return service.saveUsuarios(usuarios);
     }
     
-    // Listar todos (puede ser público o solo admin, tú decides; aquí lo dejo público)
+    // Listar todos (público)
     @GetMapping
     public List<Usuario> findAllUsuarios() {
         return service.getUsuarios();

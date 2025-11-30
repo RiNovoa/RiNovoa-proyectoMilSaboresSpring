@@ -66,16 +66,17 @@
 	</dependency>
 
 	<dependency>
-		<groupId>com.oracle.database.security</groupId>
-		<artifactId>osdt_core</artifactId>
-		<version>23.7.0.25.01</version>
+    <groupId>com.oracle.database.security</groupId>
+    <artifactId>osdt_core</artifactId>
+    <version>21.20.0.0</version>
 	</dependency>
 
 	<dependency>
 		<groupId>com.oracle.database.security</groupId>
 		<artifactId>osdt_cert</artifactId>
-		<version>23.7.0.25.01</version>
+		<version>21.20.0.0</version>
 	</dependency>
+
 
 	</dependencies>
 
