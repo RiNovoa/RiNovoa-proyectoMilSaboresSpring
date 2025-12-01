@@ -18,7 +18,9 @@ public class Boleta {
     @Column(name = "id")
     private Integer id; // <-- Integer, no int
 
-    @Column(name = "fecha", nullable = false, length = 20)
+    // 🔹 Guardamos la fecha como STRING (ISO) para evitar problemas de tipos.
+    // Ejemplo de valor: 2025-12-01T23:14:35
+    @Column(name = "fecha", nullable = false, length = 30)
     private String fecha;
 
     @Column(name = "total", nullable = false)
@@ -34,8 +36,6 @@ public class Boleta {
     private Integer idUsuario;
 
     // 🔗 Relación MANY-TO-ONE con Usuario
-    // Usa la misma columna id_usuario. Como ya tenemos idUsuario,
-    // marcamos insertable/updatable en false para no duplicar.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", insertable = false, updatable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -47,8 +47,7 @@ public class Boleta {
     private List<DetalleBoleta> detalles;
 
     // ===== Constructor vacío requerido por JPA =====
-    public Boleta() {
-    }
+    public Boleta() {}
 
     // ===== Getters y Setters =====
 
@@ -106,8 +105,7 @@ public class Boleta {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-        // opcionalmente podrías sincronizar idUsuario:
-        // this.idUsuario = (usuario != null ? usuario.getId() : null);
+        // opcional: this.idUsuario = (usuario != null ? usuario.getId() : null);
     }
 
     public List<DetalleBoleta> getDetalles() {
