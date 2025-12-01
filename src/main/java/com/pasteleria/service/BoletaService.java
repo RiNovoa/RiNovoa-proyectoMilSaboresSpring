@@ -6,12 +6,13 @@ import com.pasteleria.Entity.Producto;
 import com.pasteleria.Entity.Usuario;
 import com.pasteleria.Entity.RolUsuario;
 import com.pasteleria.dto.CheckoutItemDTO;
-import com.pasteleria.dto.CheckoutRequest;      
+import com.pasteleria.dto.CheckoutRequest;
 import com.pasteleria.repository.BoletaRepository;
 import com.pasteleria.repository.DetalleBoletaRepository;
 import com.pasteleria.repository.ProductoRepository;
 import com.pasteleria.repository.UsuarioRepository;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,7 +99,12 @@ public class BoletaService {
 
         // 2) Crear boleta base (sin total todavía)
         Boleta boleta = new Boleta();
-        boleta.setFecha(LocalDate.now().toString());
+
+        // Guardamos fecha + hora en formato ISO, ej: 2025-11-30T22:15:03
+        String fechaActual = LocalDateTime.now()
+                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        boleta.setFecha(fechaActual);
+
         boleta.setEstado("pagado");
         boleta.setMedio_pago(req.getMedioPago());
         boleta.setIdUsuario(u.getId());
