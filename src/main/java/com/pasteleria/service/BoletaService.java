@@ -12,7 +12,6 @@ import com.pasteleria.repository.DetalleBoletaRepository;
 import com.pasteleria.repository.ProductoRepository;
 import com.pasteleria.repository.UsuarioRepository;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,12 +98,8 @@ public class BoletaService {
 
         // 2) Crear boleta base (sin total todavía)
         Boleta boleta = new Boleta();
-
-        // Guardamos fecha + hora en formato ISO, ej: 2025-11-30T22:15:03
-        String fechaActual = LocalDateTime.now()
-                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        boleta.setFecha(fechaActual);
-
+        // 🔹 Guardamos fecha/hora local como String ISO (ej: 2025-12-01T23:14:35)
+        boleta.setFecha(LocalDateTime.now().toString());
         boleta.setEstado("pagado");
         boleta.setMedio_pago(req.getMedioPago());
         boleta.setIdUsuario(u.getId());
@@ -129,7 +124,7 @@ public class BoletaService {
             producto.setStock(producto.getStock() - item.getCantidad());
             productoRepository.save(producto);
 
-            // Precio unitario desde la BD (más seguro que lo mande el front)
+            // Precio unitario desde la BD
             int precioUnitario = producto.getPrecio_clp();
             int subtotal = precioUnitario * item.getCantidad();
 
