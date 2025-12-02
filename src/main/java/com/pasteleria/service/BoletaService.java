@@ -63,7 +63,12 @@ public class BoletaService {
 
     // Eliminar
     public void deleteBoleta(Integer id) {
-        repository.deleteById(id);
+        Boleta boleta = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Boleta no encontrada con id: " + id));
+
+        // Borrado lógico: solo cambiamos el estado
+        boleta.setEstado("anulada"); // o "eliminada", como prefieras
+        repository.save(boleta);
     }
 
     // Actualizar
